@@ -3,7 +3,11 @@
 namespace App\Exceptions;
 
 use Exception;
+use http\Exception\RuntimeException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\Debug\Exception\FatalErrorException;
 
 class Handler extends ExceptionHandler
 {
@@ -48,6 +52,30 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+
+        if(\App::environment(['production'])&&$request->expectsJson()){
+            $code=-1;
+            $status = 200;
+            $msg='error';
+            if($exception instanceof MessageException){
+                $msg=$exception->getMessage();
+            }else if($exception instanceof ValidationException){
+                $msg=current(current($exception->errors()));
+            }else if($exception instanceof AuthenticationException){
+                $code=401;
+                $msg='未登录';
+            }else if($exception instanceof FatalErrorException){
+                $status=500;
+            }else if($exception instanceof RuntimeException){
+                $status=500;
+            }
+            $data=[
+                'code'=>$code,
+                'msg'=>$msg,
+            ];
+
+            return response()->json($data,$status);
+        }
         return parent::render($request, $exception);
     }
 }

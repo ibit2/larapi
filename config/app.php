@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'PRC',
 
     /*
     |--------------------------------------------------------------------------
@@ -78,7 +78,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'zh-CN',
 
     /*
     |--------------------------------------------------------------------------
@@ -227,5 +227,9 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
+
+    'snowflake'=>[
+        'node_id'=>env('SNOWFLAKE_NODE_ID',1),
+    ]
 
 ];
